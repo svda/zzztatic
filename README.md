@@ -1,3 +1,5 @@
 # zZztatic
 
 My personal bot that helps me automate my development workflow.
+
+Testing first run.
