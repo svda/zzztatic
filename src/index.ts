@@ -1,10 +1,4 @@
-import { Probot } from 'probot';
+import Actions from '@probot/adapter-github-actions';
+import app from './app';
 
-export = (app: Probot) => {
-  app.on('pull_request.synchronize', async (context) => {
-    const issueComment = context.issue({
-      body: 'Thanks for improving this PR!',
-    });
-    await context.octokit.issues.createComment(issueComment);
-  });
-};
+Actions.run(app);
