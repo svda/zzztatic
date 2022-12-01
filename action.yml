@@ -1,0 +1,8 @@
+name: Bot checks
+description: ""
+branding:
+  icon: "gift"
+  color: orange
+runs:
+  using: "node12"
+  main: "dist/index.js"
