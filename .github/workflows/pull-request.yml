@@ -1,10 +1,13 @@
-name: Say Hello World
+name: Check pull request
 "on":
-  issues:
+  pull_request:
     types:
       - opened
+      - reopened
+      - synchronize
+      - edited
 jobs:
-  issuesOpened:
+  prOpened:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
