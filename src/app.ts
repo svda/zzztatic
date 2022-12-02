@@ -1,7 +1,12 @@
 import { Probot } from 'probot';
+import prCommentRecipe from './recipes/pr-label';
+
+type Recipe = {
+  register: (app: Probot) => void;
+};
+
+const recipes: Recipe[] = [prCommentRecipe];
 
 export default (app: Probot) => {
-  app.on('issues.opened', async (context) => {
-    return context.octokit.issues.createComment(context.issue({ body: 'Hello, World!' }));
-  });
+  recipes.forEach((recipe) => recipe.register(app));
 };
