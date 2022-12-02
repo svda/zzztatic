@@ -1,9 +1,6 @@
 import { Probot } from 'probot';
-import prCommentRecipe from './recipes/pr-label';
-
-type Recipe = {
-  register: (app: Probot) => void;
-};
+import { Recipe } from './recipes/interfaces';
+import prCommentRecipe from './recipes/pr-comment';
 
 const recipes: Recipe[] = [prCommentRecipe];
 

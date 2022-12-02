@@ -10,8 +10,8 @@ const register = (app: Probot) => {
   app.on(
     ['pull_request.opened', 'pull_request.reopened', 'pull_request.edited', 'pull_request.synchronize'],
     async (context) => {
-      const logger = createLogger(context, {
-        issue_number: context.issue().issue_number,
+      const logger = createLogger(context, 'pull-request-comment', {
+        pr: context.issue().issue_number,
       });
 
       handle(context, logger);
