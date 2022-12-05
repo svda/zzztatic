@@ -1,9 +1,8 @@
 import { Probot } from 'probot';
-import { Recipe } from './recipes/interfaces';
-import prCommentRecipe from './recipes/pr-comment';
 
-const recipes: Recipe[] = [prCommentRecipe];
+import { prReviewModule } from './modules/pr-review/pr-review-module';
+import { distFilesRecipe } from './modules/pr-review/recipes/dist-files';
 
 export default (app: Probot) => {
-  recipes.forEach((recipe) => recipe.register(app));
+  prReviewModule.register(app, { recipes: [distFilesRecipe] });
 };
