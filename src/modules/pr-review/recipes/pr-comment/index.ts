@@ -1,5 +1,6 @@
 import { Context, Logger, Probot } from 'probot';
 import { createLogger } from '../../logger';
+import { Recipe } from '../interfaces';
 
 const handle = async (context: Context, logger: Logger): Promise<void> => {
   await context.octokit.issues.createComment(context.issue({ body: 'Hello, World!' }));
@@ -19,6 +20,8 @@ const register = (app: Probot) => {
   );
 };
 
-export default {
+const recipe: Recipe = {
   register,
 };
+
+export default recipe;

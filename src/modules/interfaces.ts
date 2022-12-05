@@ -1,5 +1,5 @@
 import { Probot } from 'probot';
 
-export type Recipe = {
+export interface Module {
   register: (app: Probot) => void;
-};
+}

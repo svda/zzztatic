@@ -1,4 +1,4 @@
-name: Check pull request
+name: Review pull request
 "on":
   pull_request:
     types:
