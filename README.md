@@ -1,3 +1,3 @@
 # zZztatic
 
-My personal bot that helps me automate my development workflow.
+My personal bot that helps me automate my development workflow!
