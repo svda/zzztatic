@@ -3,10 +3,12 @@ import { Maybe } from 'purify-ts';
 
 import { Module } from '../interfaces';
 import { Review, ReviewEvent } from './interfaces';
+import { createLogger } from './logger';
 import { Recipe, RecipeResult } from './recipes/interfaces';
 
 const getChanges = async (context: Context) => {
-  const response = await context.octokit.pulls.listFiles();
+  const pullRequest = context.pullRequest();
+  const response = await context.octokit.pulls.listFiles(pullRequest);
 
   return Maybe.of(response)
     .map((response) => response.data)
@@ -14,10 +16,19 @@ const getChanges = async (context: Context) => {
     .extract();
 };
 
+const createReview = async (context: Context, review: Review): Promise<void> => {
+  const pullRequest = context.pullRequest();
+
+  await context.octokit.rest.pulls.createReview({
+    ...pullRequest,
+    ...review,
+  });
+};
+
 const getEvent = (currentEvent: ReviewEvent, nextEvent: ReviewEvent) => {
   return currentEvent === ReviewEvent.REQUEST_CHANGES || nextEvent === ReviewEvent.REQUEST_CHANGES
     ? ReviewEvent.REQUEST_CHANGES
-    : nextEvent === ReviewEvent.APPROVE
+    : currentEvent === ReviewEvent.APPROVE || nextEvent === ReviewEvent.APPROVE
     ? ReviewEvent.APPROVE
     : ReviewEvent.COMMENT;
 };
@@ -37,15 +48,6 @@ const toReview = (results: RecipeResult[]): Review =>
       comments: [],
     }
   );
-
-const createReview = async (context: Context, review: Review): Promise<void> => {
-  const pullRequest = context.pullRequest();
-
-  await context.octokit.rest.pulls.createReview({
-    ...pullRequest,
-    ...review,
-  });
-};
 
 type Config = {
   recipes: Recipe[];
