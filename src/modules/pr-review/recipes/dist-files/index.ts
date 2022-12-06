@@ -9,8 +9,8 @@ import { Recipe, RecipeResult } from '../interfaces';
  */
 const run = async (context: Context, changes: any): Promise<RecipeResult> => {
   const logger = createLogger(context, 'dist-files');
-  logger.log(changes);
-
+  logger.info(changes);
+  console.log(changes);
   return {
     event: ReviewEvent.APPROVE,
     comments: [],

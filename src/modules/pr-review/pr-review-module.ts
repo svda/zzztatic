@@ -12,7 +12,7 @@ const getChanges = async (context: Context) => {
 
   return Maybe.of(response)
     .map((response) => response.data)
-    .map((files) => files.map(({ filename, status, additions, deletions, changes }) => filename))
+    .map((files) => files.map((file) => file))
     .extract();
 };
 
@@ -56,7 +56,7 @@ type Config = {
 const run =
   ({ recipes }: Config) =>
   async (context: Context) => {
-    const changes = getChanges(context);
+    const changes = await getChanges(context);
     const results = await Promise.all(recipes.map((recipe) => recipe.run(context, changes)));
 
     const review = Maybe.of(results).map(toReview).extract();
