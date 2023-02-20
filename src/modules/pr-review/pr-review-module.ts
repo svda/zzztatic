@@ -1,29 +1,11 @@
 import { Context } from 'probot';
 import { Maybe } from 'purify-ts';
 
-import { Module } from '../interfaces';
+import { Module } from '../module';
+import { createReview } from './actions/create-review';
+import { getChanges } from './actions/get-changes';
 import { Review, ReviewEvent } from './interfaces';
-import { createLogger } from './logger';
 import { Recipe, RecipeResult } from './recipes/interfaces';
-
-const getChanges = async (context: Context) => {
-  const pullRequest = context.pullRequest();
-  const response = await context.octokit.pulls.listFiles(pullRequest);
-
-  return Maybe.of(response)
-    .map((response) => response.data)
-    .map((files) => files.map((file) => file))
-    .extract();
-};
-
-const createReview = async (context: Context, review: Review): Promise<void> => {
-  const pullRequest = context.pullRequest();
-
-  await context.octokit.rest.pulls.createReview({
-    ...pullRequest,
-    ...review,
-  });
-};
 
 const getEvent = (currentEvent: ReviewEvent, nextEvent: ReviewEvent) => {
   return currentEvent === ReviewEvent.REQUEST_CHANGES || nextEvent === ReviewEvent.REQUEST_CHANGES
@@ -56,12 +38,16 @@ type Config = {
 const run =
   ({ recipes }: Config) =>
   async (context: Context) => {
-    const changes = await getChanges(context);
+    const changes = await getChanges(context).caseOf({
+      Left: (error) => {
+        throw error;
+      },
+      Right: (result) => result,
+    });
+
     const results = await Promise.all(recipes.map((recipe) => recipe.run(context, changes)));
 
-    const review = Maybe.of(results).map(toReview).extract();
-
-    return createReview(context, review);
+    Maybe.of(results).map(toReview).map(createReview(context)).extract();
   };
 
 export const prReviewModule: Module<Config> = {
